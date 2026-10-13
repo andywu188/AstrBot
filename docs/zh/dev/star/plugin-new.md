@@ -116,6 +116,7 @@ support_platforms:
 - `vocechat`
 - `weixin_official_account`
 - `weixin_oc`
+- `wechatpadpro`
 - `satori`
 - `misskey`
 - `line`

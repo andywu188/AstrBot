@@ -67,6 +67,7 @@ class ComponentType(str, Enum):
     Location = "Location"  # TODO
     Music = "Music"
     Json = "Json"
+    WechatEmoji = "WechatEmoji"
     Unknown = "Unknown"
 
 
@@ -922,6 +923,18 @@ class File(BaseMessageComponent):
         }
 
 
+class WechatEmoji(BaseMessageComponent):
+    """WeChat sticker identified by md5, used by the WeChatPadPro adapter."""
+
+    type: ComponentType = ComponentType.WechatEmoji
+    md5: str | None = ""
+    md5_len: int | None = 0
+    cdnurl: str | None = ""
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+
+
 ComponentTypes = {
     # Basic Message Segments
     "plain": Plain,
@@ -947,4 +960,5 @@ ComponentTypes = {
     "nodes": Nodes,
     "json": Json,
     "unknown": Unknown,
+    "WechatEmoji": WechatEmoji,
 }

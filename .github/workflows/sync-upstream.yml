@@ -1,0 +1,53 @@
+# 同步上游 AstrBotDevs/AstrBot 到本 fork。仅手动触发。
+# master 只允许快进上游。私有改动留在 private/wechatpadpro，每次同步后变基到新的 master。
+# workflow_dispatch 使用默认分支上的 workflow，因此 fork 的默认分支应设为 private/wechatpadpro。
+name: Sync upstream
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'andywu188/AstrBot'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch upstream and origin
+        run: |
+          git remote add upstream https://github.com/AstrBotDevs/AstrBot.git
+          git fetch upstream master
+          git fetch origin master private/wechatpadpro
+
+      - name: Fast-forward master
+        run: git push --ff-only origin upstream/master:master
+
+      - name: Rebase private branch onto upstream
+        run: |
+          if ! git rev-parse --verify origin/private/wechatpadpro >/dev/null 2>&1; then
+            echo "origin/private/wechatpadpro does not exist. Push the private branch before syncing."
+            exit 1
+          fi
+          git checkout -B private/wechatpadpro origin/private/wechatpadpro
+          if ! git rebase upstream/master; then
+            echo "Rebase stopped on conflicts:"
+            git status --short
+            git rebase --abort
+            exit 1
+          fi
+          git push --force-with-lease origin private/wechatpadpro

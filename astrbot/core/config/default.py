@@ -398,6 +398,14 @@ CONFIG_METADATA_2 = {
                         "weixin_oc_long_poll_timeout_ms": 35_000,
                         "weixin_oc_api_timeout_ms": 120_000,
                     },
+                    "WeChatPadPro": {
+                        "id": "wechatpadpro",
+                        "type": "wechatpadpro",
+                        "enable": False,
+                        "admin_key": "",
+                        "host": "",
+                        "wechatpadpro_port": 8059,
+                    },
                     "企业微信 (智能机器人)": {
                         "id": "wecom_ai_bot",
                         "type": "wecom_ai_bot",
@@ -563,6 +571,25 @@ CONFIG_METADATA_2 = {
                     # },
                 },
                 "items": {
+                    "admin_key": {
+                        "description": "WeChatPadPro Admin Key",
+                        "type": "string",
+                        "hint": "WeChatPadPro 管理端密钥，用于生成登录授权码。",
+                        "secret": True,
+                        "show_key": True,
+                    },
+                    "host": {
+                        "description": "WeChatPadPro 地址",
+                        "type": "string",
+                        "hint": "WeChatPadPro 服务的局域网或公网 IP，不要包含 http:// 和端口。",
+                        "show_key": True,
+                    },
+                    "wechatpadpro_port": {
+                        "description": "WeChatPadPro 端口",
+                        "type": "int",
+                        "hint": "WeChatPadPro 服务端口，默认 8059。旧配置里的 port 仍会被读取。",
+                        "show_key": True,
+                    },
                     # "webchat_link_path": {
                     #     "description": "链接路径",
                     #     "_special": "webchat_link_path",
@@ -787,16 +814,6 @@ CONFIG_METADATA_2 = {
                         "description": "是否换用主动发送接口",
                         "type": "bool",
                         "desc": "只有企业认证的公众号才能主动发送。主动发送接口的限制会少一些。",
-                    },
-                    "wpp_active_message_poll": {
-                        "description": "是否启用主动消息轮询",
-                        "type": "bool",
-                        "hint": "只有当你发现微信消息没有按时同步到 AstrBot 时，才需要启用这个功能，默认不启用。",
-                    },
-                    "wpp_active_message_poll_interval": {
-                        "description": "主动消息轮询间隔",
-                        "type": "int",
-                        "hint": "主动消息轮询间隔，单位为秒，默认 3 秒，最大不要超过 60 秒，否则可能被认为是旧消息。",
                     },
                     "kf_name": {
                         "description": "微信客服账号名",

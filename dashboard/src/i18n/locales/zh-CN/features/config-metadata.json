@@ -863,13 +863,17 @@
         "description": "长连接心跳间隔",
         "hint": "长连接模式心跳间隔（秒），建议 30 秒。"
       },
-      "wpp_active_message_poll": {
-        "description": "是否启用主动消息轮询",
-        "hint": "只有当你发现微信消息没有按时同步到 AstrBot 时，才需要启用这个功能，默认不启用。"
+      "admin_key": {
+        "description": "WeChatPadPro Admin Key",
+        "hint": "WeChatPadPro 管理端密钥，用于生成登录授权码。"
       },
-      "wpp_active_message_poll_interval": {
-        "description": "主动消息轮询间隔",
-        "hint": "主动消息轮询间隔，单位为秒，默认 3 秒，最大不要超过 60 秒，否则可能被认为是旧消息。"
+      "host": {
+        "description": "WeChatPadPro 地址",
+        "hint": "WeChatPadPro 服务的局域网或公网 IP，不要包含协议和端口。"
+      },
+      "wechatpadpro_port": {
+        "description": "WeChatPadPro 端口",
+        "hint": "WeChatPadPro 服务端口，默认 8059。旧配置里的 port 仍会被读取。"
       },
       "ws_reverse_host": {
         "description": "反向 Websocket 主机",

@@ -28,6 +28,7 @@ class PlatformAdapterType(enum.Flag):
     MATTERMOST = enum.auto()
     WEBCHAT = enum.auto()
     ALL = enum.auto()
+    WECHATPADPRO = enum.auto()
 
 
 ADAPTER_NAME_2_TYPE = {
@@ -51,6 +52,7 @@ ADAPTER_NAME_2_TYPE = {
     "weixin_oc": PlatformAdapterType.WEIXIN_OC,
     "mattermost": PlatformAdapterType.MATTERMOST,
     "webchat": PlatformAdapterType.WEBCHAT,
+    "wechatpadpro": PlatformAdapterType.WECHATPADPRO,
 }
 
 

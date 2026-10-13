@@ -947,13 +947,17 @@
                 "description": "Интервал сердцебиения соединения",
                 "hint": "Интервал пульса (в секундах) в режиме длительного соединения. Рекомендуется 30 секунд."
             },
-            "wpp_active_message_poll": {
-                "description": "Включить активный опрос сообщений",
-                "hint": "Включите, только если сообщения WeChat приходят с задержкой."
+            "admin_key": {
+                "description": "WeChatPadPro Admin Key",
+                "hint": "Ключ администратора для создания кода авторизации входа."
             },
-            "wpp_active_message_poll_interval": {
-                "description": "Интервал опроса сообщений",
-                "hint": "По умолчанию 3 сек."
+            "host": {
+                "description": "Адрес WeChatPadPro",
+                "hint": "Локальный или публичный IP службы WeChatPadPro, без схемы и порта."
+            },
+            "wechatpadpro_port": {
+                "description": "Порт WeChatPadPro",
+                "hint": "Порт службы, по умолчанию 8059. Старое поле port тоже читается."
             },
             "ws_reverse_host": {
                 "description": "Хост реверсивного WebSocket",

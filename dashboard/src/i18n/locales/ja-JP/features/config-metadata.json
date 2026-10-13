@@ -943,13 +943,17 @@
         "description": "常時接続のハートビート間隔",
         "hint": "常時接続モードのハートビート間隔（秒）です。30 秒を推奨します。"
       },
-      "wpp_active_message_poll": {
-        "description": "プロアクティブメッセージのポーリングを有効化",
-        "hint": "WeChat メッセージが AstrBot に適時同期されない場合にのみ有効にしてください。デフォルトは無効です。"
+      "admin_key": {
+        "description": "WeChatPadPro Admin Key",
+        "hint": "ログイン用の認可コードを生成するための WeChatPadPro 管理キーです。"
       },
-      "wpp_active_message_poll_interval": {
-        "description": "プロアクティブメッセージのポーリング間隔",
-        "hint": "プロアクティブメッセージのポーリング間隔（秒）です。デフォルトは 3 秒です。古いメッセージと判断される可能性があるため、60 秒を超えないようにしてください。"
+      "host": {
+        "description": "WeChatPadPro アドレス",
+        "hint": "WeChatPadPro サービスの LAN または公開 IP。スキームとポートは含めないでください。"
+      },
+      "wechatpadpro_port": {
+        "description": "WeChatPadPro ポート",
+        "hint": "WeChatPadPro のサービスポート。既定値は 8059 です。古い port 設定も読み取られます。"
       },
       "ws_reverse_host": {
         "description": "リバース WebSocket ホスト",

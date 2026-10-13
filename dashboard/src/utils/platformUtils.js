@@ -22,7 +22,7 @@ export function getPlatformIcon(name) {
     return new URL('@/assets/images/platform_logos/wechat.png', import.meta.url).href
   } else if (name === 'wecom' || name === 'wecom_ai_bot') {
     return new URL('@/assets/images/platform_logos/wecom.png', import.meta.url).href
-  } else if (name === 'weixin_official_account') {
+  } else if (name === 'weixin_official_account' || name === 'wechatpadpro') {
     return new URL('@/assets/images/platform_logos/wechat.png', import.meta.url).href
   } else if (name === 'lark') {
     return new URL('@/assets/images/platform_logos/lark.png', import.meta.url).href
@@ -67,6 +67,7 @@ export function getTutorialLink(platformType) {
     "lark": "https://docs.astrbot.app/platform/lark.html",
     "telegram": "https://docs.astrbot.app/platform/telegram.html",
     "dingtalk": "https://docs.astrbot.app/platform/dingtalk.html",
+    "wechatpadpro": "https://docs.astrbot.app/platform/wechatpadpro.html",
     "weixin_official_account": "https://docs.astrbot.app/platform/weixin-official-account.html",
     "discord": "https://docs.astrbot.app/platform/discord.html",
     "slack": "https://docs.astrbot.app/platform/slack.html",
@@ -107,6 +108,7 @@ export function getPlatformDisplayName(platformId) {
     aiocqhttp: 'aiocqhttp (OneBot v11)',
     qq_official: 'qq_official (QQ 官方机器人平台)',
     weixin_official_account: 'weixin_official_account (微信公众号)',
+    wechatpadpro: 'wechatpadpro (WeChatPadPro)',
     wecom: 'wecom (企业微信应用)',
     wecom_ai_bot: 'wecom_ai_bot (企业微信智能机器人)',
     lark: 'lark (飞书)',

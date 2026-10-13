@@ -842,13 +842,17 @@
         "description": "Long Connection Heartbeat Interval",
         "hint": "Heartbeat interval (seconds) in long connection mode. 30 seconds is recommended."
       },
-      "wpp_active_message_poll": {
-        "description": "Enable Proactive Message Polling",
-        "hint": "Only enable if WeChat messages are not syncing to AstrBot on time. Disabled by default."
+      "admin_key": {
+        "description": "WeChatPadPro Admin Key",
+        "hint": "Admin key used to generate a WeChatPadPro login auth key."
       },
-      "wpp_active_message_poll_interval": {
-        "description": "Proactive Message Poll Interval",
-        "hint": "Interval in seconds, default 3, should not exceed 60 or it may be considered old messages."
+      "host": {
+        "description": "WeChatPadPro Host",
+        "hint": "LAN or public IP of the WeChatPadPro service, without a scheme or port."
+      },
+      "wechatpadpro_port": {
+        "description": "WeChatPadPro Port",
+        "hint": "WeChatPadPro service port. Defaults to 8059. A legacy port value is still read."
       },
       "ws_reverse_host": {
         "description": "Reverse WebSocket Host",

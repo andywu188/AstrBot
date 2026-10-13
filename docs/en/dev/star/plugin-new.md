@@ -114,6 +114,7 @@ The values in `support_platforms` must be keys from `ADAPTER_NAME_2_TYPE`. Curre
 - `vocechat`
 - `weixin_official_account`
 - `weixin_oc`
+- `wechatpadpro`
 - `satori`
 - `misskey`
 - `line`

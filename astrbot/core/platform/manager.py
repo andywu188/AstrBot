@@ -180,6 +180,10 @@ class PlatformManager:
                     from .sources.weixin_oc.weixin_oc_adapter import (
                         WeixinOCAdapter,  # noqa: F401
                     )
+                case "wechatpadpro":
+                    from .sources.wechatpadpro.wechatpadpro_adapter import (
+                        WeChatPadProAdapter,  # noqa: F401
+                    )
                 case "slack":
                     from .sources.slack.slack_adapter import SlackAdapter  # noqa: F401
                 case "satori":
