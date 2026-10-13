@@ -844,15 +844,27 @@
       },
       "admin_key": {
         "description": "WeChatPadPro Admin Key",
-        "hint": "Admin key used to generate a WeChatPadPro login auth key."
+        "hint": "Admin KEY. It is sent only as the key query of /Admin/GenAuthKey."
+      },
+      "access_token": {
+        "description": "WeChatPadPro Access Token",
+        "hint": "Account Access Token. Sent as X-Access-Token when requesting the login QR code and the WebSocket ticket. Do not use the generated auth code."
       },
       "host": {
         "description": "WeChatPadPro Host",
         "hint": "LAN or public IP of the WeChatPadPro service, without a scheme or port."
       },
       "wechatpadpro_port": {
-        "description": "WeChatPadPro Port",
-        "hint": "WeChatPadPro service port. Defaults to 8059. A legacy port value is still read."
+        "description": "WeChatPadPro HTTP Port",
+        "hint": "HTTP API port. Defaults to 8059. A legacy port value is still read."
+      },
+      "wechatpadpro_ws_port": {
+        "description": "WeChatPadPro WebSocket Port",
+        "hint": "WebSocket port. 0 uses the same port as the HTTP API."
+      },
+      "wechatpadpro_tls": {
+        "description": "WeChatPadPro TLS",
+        "hint": "Use https for the HTTP API and wss for WebSocket. Certificates are checked with the system trust store."
       },
       "ws_reverse_host": {
         "description": "Reverse WebSocket Host",

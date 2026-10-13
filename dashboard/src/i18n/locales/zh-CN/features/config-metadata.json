@@ -865,15 +865,27 @@
       },
       "admin_key": {
         "description": "WeChatPadPro Admin Key",
-        "hint": "WeChatPadPro 管理端密钥，用于生成登录授权码。"
+        "hint": "管理员 KEY，仅作为 /Admin/GenAuthKey 的 key 参数。"
+      },
+      "access_token": {
+        "description": "WeChatPadPro Access Token",
+        "hint": "账号 Access Token。取登录二维码和换 WebSocket 票据时放入请求头 X-Access-Token，不要填生成出来的授权码。"
       },
       "host": {
         "description": "WeChatPadPro 地址",
         "hint": "WeChatPadPro 服务的局域网或公网 IP，不要包含协议和端口。"
       },
       "wechatpadpro_port": {
-        "description": "WeChatPadPro 端口",
-        "hint": "WeChatPadPro 服务端口，默认 8059。旧配置里的 port 仍会被读取。"
+        "description": "WeChatPadPro HTTP 端口",
+        "hint": "HTTP API 端口，默认 8059。旧配置里的 port 仍会被读取。"
+      },
+      "wechatpadpro_ws_port": {
+        "description": "WeChatPadPro WebSocket 端口",
+        "hint": "WebSocket 端口。填 0 时与 HTTP 端口相同。"
+      },
+      "wechatpadpro_tls": {
+        "description": "WeChatPadPro TLS",
+        "hint": "开启后 HTTP 接口使用 https，WebSocket 使用 wss。证书由系统信任库校验。"
       },
       "ws_reverse_host": {
         "description": "反向 Websocket 主机",

@@ -47,7 +47,7 @@ class WeChatPadProMessageEvent(AstrMessageEvent):
         if self.get_group_id() and "#" in target:
             target = target.split("#", 1)[0]
         is_group = "@chatroom" in target
-        async with aiohttp.ClientSession() as session:
+        async with self.adapter._client_session() as session:
             text_parts: list[str] = []
             at_ids: list[str] = []
 
@@ -176,11 +176,8 @@ class WeChatPadProMessageEvent(AstrMessageEvent):
 
     async def _post(self, session, url, payload):
         params = {"authcode": self.adapter.auth_key}
-        headers = {"X-Access-Token": self.adapter.auth_key or ""}
         try:
-            async with session.post(
-                url, params=params, json=payload, headers=headers
-            ) as resp:
+            async with session.post(url, params=params, json=payload) as resp:
                 data = await resp.json()
                 if not self.adapter._api_ok(resp.status, data):
                     logger.error(f"{url} failed: {resp.status} {data}")

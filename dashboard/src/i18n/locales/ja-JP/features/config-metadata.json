@@ -945,15 +945,27 @@
       },
       "admin_key": {
         "description": "WeChatPadPro Admin Key",
-        "hint": "ログイン用の認可コードを生成するための WeChatPadPro 管理キーです。"
+        "hint": "管理者 KEY。/Admin/GenAuthKey の key パラメータにだけ使います。"
+      },
+      "access_token": {
+        "description": "WeChatPadPro Access Token",
+        "hint": "アカウントの Access Token。ログイン QR と WebSocket チケットの取得時に X-Access-Token へ入れます。生成した認可コードは入れないでください。"
       },
       "host": {
         "description": "WeChatPadPro アドレス",
         "hint": "WeChatPadPro サービスの LAN または公開 IP。スキームとポートは含めないでください。"
       },
       "wechatpadpro_port": {
-        "description": "WeChatPadPro ポート",
-        "hint": "WeChatPadPro のサービスポート。既定値は 8059 です。古い port 設定も読み取られます。"
+        "description": "WeChatPadPro HTTP ポート",
+        "hint": "HTTP API のポート。既定値は 8059 です。古い port 設定も読み取られます。"
+      },
+      "wechatpadpro_ws_port": {
+        "description": "WeChatPadPro WebSocket ポート",
+        "hint": "WebSocket のポート。0 のときは HTTP ポートと同じです。"
+      },
+      "wechatpadpro_tls": {
+        "description": "WeChatPadPro TLS",
+        "hint": "有効にすると HTTP API は https、WebSocket は wss になります。証明書はシステムの信頼ストアで検証します。"
       },
       "ws_reverse_host": {
         "description": "リバース WebSocket ホスト",

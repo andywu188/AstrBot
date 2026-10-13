@@ -59,12 +59,23 @@ class WeChatPadProAdapter(Platform):
 
         # 保存配置信息
         self.admin_key = self.config.get("admin_key")
+        self.access_token = self.config.get("access_token")
         self.host = self.config.get("host")
         # ``port`` is shared with webhook callback metadata, so new configs use
         # ``wechatpadpro_port``. Keep ``port`` for configs saved before removal.
         self.port = self.config.get("wechatpadpro_port", self.config.get("port"))
+        raw_ws_port = self.config.get("wechatpadpro_ws_port")
+        self.ws_port = self.port if raw_ws_port in (None, "", 0, "0") else raw_ws_port
+        self.use_tls = self.config.get("wechatpadpro_tls") in (
+            True,
+            "true",
+            "True",
+            1,
+            "1",
+        )
+        scheme = "https" if self.use_tls else "http"
         # WeChatPadProMAX swagger basePath is /api.
-        self.base_url = f"http://{self.host}:{self.port}/api"
+        self.base_url = f"{scheme}://{self.host}:{self.port}/api"
         self.auth_key = None  # 用于保存生成的授权码
         self.wxid: str | None = None  # 用于保存登录成功后的 wxid
         self.qr_uuid: str | None = None
@@ -159,8 +170,35 @@ class WeChatPadProAdapter(Platform):
         except Exception as e:
             logger.error(f"保存 WeChatPadPro 凭据失败: {e}")
 
+    def _client_session(
+        self,
+        timeout: aiohttp.ClientTimeout | None = None,
+    ) -> aiohttp.ClientSession:
+        """Open an HTTP session for the configured WeChatPadPro service.
+
+        Args:
+            timeout: Optional request timeout. WebSocket reads pass no total limit.
+
+        Returns:
+            Session that verifies TLS when wechatpadpro_tls is enabled.
+        """
+        kwargs: dict = {}
+        if timeout is not None:
+            kwargs["timeout"] = timeout
+        if self.use_tls:
+            kwargs["connector"] = aiohttp.TCPConnector(ssl=True)
+        return aiohttp.ClientSession(**kwargs)
+
     def _user_params(self) -> dict:
         return {"authcode": self.auth_key}
+
+    def _auth_headers(self) -> dict[str, str]:
+        """Return the account Access Token header required by WeChatPadProMAX.
+
+        Returns:
+            Header mapping whose X-Access-Token is the configured account token.
+        """
+        return {"X-Access-Token": self.access_token or ""}
 
     @staticmethod
     def _api_ok(status: int, data: dict) -> bool:
@@ -179,14 +217,17 @@ class WeChatPadProAdapter(Platform):
 
     async def check_online_status(self):
         """检查 WeChatPadPro 设备是否在线。"""
-        if not self.auth_key:
+        if not self.access_token:
             return False
         url = f"{self.base_url}/Login/GetLoginStatus"
-        params = {**self._user_params(), "autoLogin": "true"}
+        # Swagger documents this query as the old Access Token channel.
+        params = {"authcode": self.access_token, "autoLogin": "true"}
 
-        async with aiohttp.ClientSession() as session:
+        async with self._client_session() as session:
             try:
-                async with session.get(url, params=params) as response:
+                async with session.get(
+                    url, params=params, headers=self._auth_headers()
+                ) as response:
                     response_data = await response.json()
                     if self._api_ok(response.status, response_data):
                         if self._is_online(response_data):
@@ -199,9 +240,7 @@ class WeChatPadProAdapter(Platform):
                         300,
                         -2,
                     ):
-                        if response_data.get("Code") == -2:
-                            self.auth_key = None
-                        logger.info("WeChatPadPro 授权码无效或设备已退出。")
+                        logger.info("WeChatPadPro Access Token 无效或设备已退出。")
                         return False
                     logger.error(
                         f"检查在线状态失败: {response.status}, {response_data}",
@@ -239,9 +278,14 @@ class WeChatPadProAdapter(Platform):
 
         self.auth_key = None  # Reset auth_key before generating a new one
 
-        async with aiohttp.ClientSession() as session:
+        async with self._client_session() as session:
             try:
-                async with session.post(url, params=params, json=payload) as response:
+                async with session.post(
+                    url,
+                    params=params,
+                    json=payload,
+                    headers=self._auth_headers(),
+                ) as response:
                     if response.status != 200:
                         logger.error(
                             f"生成授权码失败: {response.status}, {await response.text()}",
@@ -268,13 +312,21 @@ class WeChatPadProAdapter(Platform):
 
     async def get_login_qr_code(self):
         """获取登录二维码地址。"""
+        if not self.access_token:
+            logger.error(
+                "WeChatPadPro access_token is empty. /Login/GetQR requires X-Access-Token.",
+            )
+            return None
         url = f"{self.base_url}/Login/GetQR"
-        params = self._user_params()
         payload = {"DeviceName": "AstrBot", "oversea": False}
 
-        async with aiohttp.ClientSession() as session:
+        async with self._client_session() as session:
             try:
-                async with session.post(url, params=params, json=payload) as response:
+                async with session.post(
+                    url,
+                    json=payload,
+                    headers=self._auth_headers(),
+                ) as response:
                     response_data = await response.json()
                     if self._api_ok(response.status, response_data):
                         data = response_data.get("Data") or {}
@@ -313,22 +365,22 @@ class WeChatPadProAdapter(Platform):
         返回 True 如果登录成功，否则返回 False。
         """
         url = f"{self.base_url}/Login/CheckQR"
-        params = {**self._user_params()}
-        if self.qr_uuid:
-            params["uuid"] = self.qr_uuid
+        params = {"uuid": self.qr_uuid} if self.qr_uuid else {}
 
         attempts = 0  # 初始化尝试次数
         max_attempts = 36  # 最大尝试次数
         countdown = 180  # 倒计时时长
         logger.info(f"请在 {countdown} 秒内扫码登录。")
         while attempts < max_attempts:
-            async with aiohttp.ClientSession() as session:
+            async with self._client_session() as session:
                 try:
                     if await self.check_online_status():
                         await self._refresh_wxid()
                         self.save_credentials()
                         return True
-                    async with session.post(url, params=params, json={}) as response:
+                    async with session.post(
+                        url, params=params, json={}, headers=self._auth_headers()
+                    ) as response:
                         response_data = await response.json()
                         if self._api_ok(response.status, response_data):
                             data = response_data.get("Data") or {}
@@ -369,13 +421,14 @@ class WeChatPadProAdapter(Platform):
 
     async def _refresh_wxid(self) -> None:
         """Read wxid from the documented login cache."""
-        if self.wxid or not self.auth_key:
+        if self.wxid or not self.access_token:
             return
         url = f"{self.base_url}/Login/GetCacheInfo"
-        async with aiohttp.ClientSession() as session:
+        async with self._client_session() as session:
             try:
                 async with session.post(
-                    url, params=self._user_params(), json={}
+                    url,
+                    headers=self._auth_headers(),
                 ) as response:
                     data = await response.json()
                     if self._api_ok(response.status, data):
@@ -412,42 +465,54 @@ class WeChatPadProAdapter(Platform):
             await asyncio.sleep(reconnect_delay)
             reconnect_delay = min(reconnect_delay * 2, 30)
 
-    async def _fetch_ws_ticket(self) -> str:
+    async def _fetch_ws_ticket(self) -> tuple[str, str]:
         """Exchange a single-use ticket valid for 5 minutes.
 
+        The private service reads the account Access Token from X-Access-Token.
+        The call has an empty body and does not send the generated auth code.
+        A successful body has Code 0 and Data.ticket. Data.websocket_path is the
+        socket path, usually /ws/sync.
+
         Returns:
-            Ticket string for /ws/sync.
+            Ticket string and the WebSocket path beginning with a slash.
 
         Raises:
-            RuntimeError: The ticket endpoint did not return a ticket.
+            RuntimeError: The Access Token is missing or the ticket is absent.
         """
+        if not self.access_token:
+            raise RuntimeError(
+                "WeChatPadPro access_token is empty. "
+                "/Runtime/WebSocketTicket requires X-Access-Token."
+            )
         url = f"{self.base_url}/Runtime/WebSocketTicket"
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                url,
-                params=self._user_params(),
-                headers={"X-Access-Token": self.auth_key or ""},
-                json={},
-            ) as response:
+        headers = self._auth_headers()
+        headers["Accept"] = "application/json"
+        async with self._client_session() as session:
+            async with session.post(url, headers=headers) as response:
                 data = await response.json()
         if not self._api_ok(response.status, data):
             raise RuntimeError(f"ticket request failed: {response.status}, {data}")
         payload = data.get("Data")
         ticket = None
+        ws_path = "/ws/sync"
         if isinstance(payload, dict):
             ticket = payload.get("ticket") or payload.get("Ticket")
+            raw_path = payload.get("websocket_path") or payload.get("WebsocketPath")
+            if isinstance(raw_path, str) and raw_path.startswith("/"):
+                ws_path = raw_path
         elif isinstance(payload, str):
             ticket = payload
         if not ticket:
             raise RuntimeError("ticket response did not include a ticket")
-        return str(ticket)
+        return str(ticket), ws_path
 
     async def _listen_sync_ws(self) -> None:
         """Open one /ws/sync connection and read until it closes."""
-        ticket = await self._fetch_ws_ticket()
-        ws_url = f"ws://{self.host}:{self.port}/ws/sync"
+        ticket, ws_path = await self._fetch_ws_ticket()
+        ws_scheme = "wss" if self.use_tls else "ws"
+        ws_url = f"{ws_scheme}://{self.host}:{self.ws_port}{ws_path}"
         timeout = aiohttp.ClientTimeout(total=None, sock_connect=15, sock_read=None)
-        async with aiohttp.ClientSession(timeout=timeout) as session:
+        async with self._client_session(timeout=timeout) as session:
             async with session.ws_connect(
                 ws_url,
                 params={"ticket": ticket},
@@ -759,7 +824,7 @@ class WeChatPadProAdapter(Platform):
         params = self._user_params()
         payload = {"QID": group_id}
 
-        async with aiohttp.ClientSession() as session:
+        async with self._client_session() as session:
             try:
                 async with session.post(url, params=params, json=payload) as response:
                     response_data = await response.json()
@@ -802,7 +867,7 @@ class WeChatPadProAdapter(Platform):
             "data_len": 0,
             "section": {"start_pos": 0, "data_len": 65536},
         }
-        async with aiohttp.ClientSession() as session:
+        async with self._client_session() as session:
             try:
                 async with session.post(url, params=params, json=payload) as response:
                     if response.status == 200:
@@ -832,7 +897,7 @@ class WeChatPadProAdapter(Platform):
             "msgId": int(new_msg_id) if str(new_msg_id).isdigit() else 0,
             "length": length,
         }
-        async with aiohttp.ClientSession() as session:
+        async with self._client_session() as session:
             try:
                 async with session.post(url, params=params, json=payload) as response:
                     if response.status == 200:
@@ -1093,7 +1158,7 @@ class WeChatPadProAdapter(Platform):
         url = f"{self.base_url}/Friend/GetContractList"
         params = self._user_params()
         payload = {"currentChatRoomContactSeq": 0, "currentWxcontactSeq": 0}
-        async with aiohttp.ClientSession() as session:
+        async with self._client_session() as session:
             try:
                 async with session.post(url, params=params, json=payload) as response:
                     if response.status != 200:
@@ -1139,7 +1204,7 @@ class WeChatPadProAdapter(Platform):
         params = self._user_params()
         names = [*user_names, *room_wx_id_list]
         payload = {"userName": ",".join(names[:20])}
-        async with aiohttp.ClientSession() as session:
+        async with self._client_session() as session:
             try:
                 async with session.post(url, params=params, json=payload) as response:
                     if response.status != 200:

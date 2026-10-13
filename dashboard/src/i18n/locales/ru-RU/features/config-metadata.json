@@ -949,15 +949,27 @@
             },
             "admin_key": {
                 "description": "WeChatPadPro Admin Key",
-                "hint": "Ключ администратора для создания кода авторизации входа."
+                "hint": "Ключ администратора. Передается только как параметр key для /Admin/GenAuthKey."
+            },
+            "access_token": {
+                "description": "WeChatPadPro Access Token",
+                "hint": "Access Token аккаунта. Передается в заголовке X-Access-Token при запросе QR-кода входа и билета WebSocket. Не подставляйте сгенерированный код авторизации."
             },
             "host": {
                 "description": "Адрес WeChatPadPro",
                 "hint": "Локальный или публичный IP службы WeChatPadPro, без схемы и порта."
             },
             "wechatpadpro_port": {
-                "description": "Порт WeChatPadPro",
-                "hint": "Порт службы, по умолчанию 8059. Старое поле port тоже читается."
+                "description": "HTTP-порт WeChatPadPro",
+                "hint": "Порт HTTP API, по умолчанию 8059. Старое поле port тоже читается."
+            },
+            "wechatpadpro_ws_port": {
+                "description": "Порт WebSocket WeChatPadPro",
+                "hint": "Порт WebSocket. 0 означает тот же порт, что и у HTTP API."
+            },
+            "wechatpadpro_tls": {
+                "description": "TLS WeChatPadPro",
+                "hint": "При включении HTTP API использует https, а WebSocket — wss. Сертификат проверяется системным хранилищем."
             },
             "ws_reverse_host": {
                 "description": "Хост реверсивного WebSocket",

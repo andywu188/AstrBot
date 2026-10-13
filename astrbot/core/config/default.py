@@ -403,8 +403,11 @@ CONFIG_METADATA_2 = {
                         "type": "wechatpadpro",
                         "enable": False,
                         "admin_key": "",
+                        "access_token": "",
                         "host": "",
                         "wechatpadpro_port": 8059,
+                        "wechatpadpro_ws_port": 0,
+                        "wechatpadpro_tls": False,
                     },
                     "企业微信 (智能机器人)": {
                         "id": "wecom_ai_bot",
@@ -574,7 +577,14 @@ CONFIG_METADATA_2 = {
                     "admin_key": {
                         "description": "WeChatPadPro Admin Key",
                         "type": "string",
-                        "hint": "WeChatPadPro 管理端密钥，用于生成登录授权码。",
+                        "hint": "管理员 KEY，仅作为 /Admin/GenAuthKey 的 key 参数。",
+                        "secret": True,
+                        "show_key": True,
+                    },
+                    "access_token": {
+                        "description": "WeChatPadPro Access Token",
+                        "type": "string",
+                        "hint": "账号 Access Token。取登录二维码和换 WebSocket 票据时放入请求头 X-Access-Token，不要填生成出来的授权码。",
                         "secret": True,
                         "show_key": True,
                     },
@@ -585,9 +595,21 @@ CONFIG_METADATA_2 = {
                         "show_key": True,
                     },
                     "wechatpadpro_port": {
-                        "description": "WeChatPadPro 端口",
+                        "description": "WeChatPadPro HTTP 端口",
                         "type": "int",
-                        "hint": "WeChatPadPro 服务端口，默认 8059。旧配置里的 port 仍会被读取。",
+                        "hint": "HTTP API 端口，默认 8059。旧配置里的 port 仍会被读取。",
+                        "show_key": True,
+                    },
+                    "wechatpadpro_ws_port": {
+                        "description": "WeChatPadPro WebSocket 端口",
+                        "type": "int",
+                        "hint": "WebSocket 端口。填 0 时与 HTTP 端口相同。",
+                        "show_key": True,
+                    },
+                    "wechatpadpro_tls": {
+                        "description": "WeChatPadPro TLS",
+                        "type": "bool",
+                        "hint": "开启后 HTTP 接口使用 https，WebSocket 使用 wss。证书由系统信任库校验。",
                         "show_key": True,
                     },
                     # "webchat_link_path": {
