@@ -175,7 +175,12 @@ class WeChatPadProMessageEvent(AstrMessageEvent):
         return base64.b64encode(buf.getvalue()).decode()
 
     async def _post(self, session, url, payload):
-        params = {"authcode": self.adapter.auth_key}
+        if not self.adapter.access_token:
+            logger.error(
+                "WeChatPadPro access_token is empty. Message APIs require authcode.",
+            )
+            return
+        params = {"authcode": self.adapter.access_token}
         try:
             async with session.post(url, params=params, json=payload) as resp:
                 data = await resp.json()

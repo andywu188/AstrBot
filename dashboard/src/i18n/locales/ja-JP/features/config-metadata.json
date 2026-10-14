@@ -943,13 +943,9 @@
         "description": "常時接続のハートビート間隔",
         "hint": "常時接続モードのハートビート間隔（秒）です。30 秒を推奨します。"
       },
-      "admin_key": {
-        "description": "WeChatPadPro Admin Key",
-        "hint": "管理者 KEY。/Admin/GenAuthKey の key パラメータにだけ使います。"
-      },
       "access_token": {
         "description": "WeChatPadPro Access Token",
-        "hint": "アカウントの Access Token。ログイン QR と WebSocket チケットの取得時に X-Access-Token へ入れます。生成した認可コードは入れないでください。"
+        "hint": "アカウントの Access Token。ログインと WebSocket チケット取得時は X-Access-Token、メッセージ・友達・グループ API では authcode に使います。"
       },
       "host": {
         "description": "WeChatPadPro アドレス",

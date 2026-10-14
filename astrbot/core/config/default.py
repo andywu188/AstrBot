@@ -402,7 +402,6 @@ CONFIG_METADATA_2 = {
                         "id": "wechatpadpro",
                         "type": "wechatpadpro",
                         "enable": False,
-                        "admin_key": "",
                         "access_token": "",
                         "host": "",
                         "wechatpadpro_port": 8059,
@@ -574,17 +573,10 @@ CONFIG_METADATA_2 = {
                     # },
                 },
                 "items": {
-                    "admin_key": {
-                        "description": "WeChatPadPro Admin Key",
-                        "type": "string",
-                        "hint": "管理员 KEY，仅作为 /Admin/GenAuthKey 的 key 参数。",
-                        "secret": True,
-                        "show_key": True,
-                    },
                     "access_token": {
                         "description": "WeChatPadPro Access Token",
                         "type": "string",
-                        "hint": "账号 Access Token。取登录二维码和换 WebSocket 票据时放入请求头 X-Access-Token，不要填生成出来的授权码。",
+                        "hint": "账号 Access Token。登录和换 WebSocket 票据时放入请求头 X-Access-Token，发消息、好友和群接口时作为查询参数 authcode。",
                         "secret": True,
                         "show_key": True,
                     },

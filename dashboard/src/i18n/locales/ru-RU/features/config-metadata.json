@@ -947,13 +947,9 @@
                 "description": "Интервал сердцебиения соединения",
                 "hint": "Интервал пульса (в секундах) в режиме длительного соединения. Рекомендуется 30 секунд."
             },
-            "admin_key": {
-                "description": "WeChatPadPro Admin Key",
-                "hint": "Ключ администратора. Передается только как параметр key для /Admin/GenAuthKey."
-            },
             "access_token": {
                 "description": "WeChatPadPro Access Token",
-                "hint": "Access Token аккаунта. Передается в заголовке X-Access-Token при запросе QR-кода входа и билета WebSocket. Не подставляйте сгенерированный код авторизации."
+                "hint": "Access Token аккаунта. Передается в X-Access-Token при входе и получении билета WebSocket, и как authcode для сообщений, друзей и групп."
             },
             "host": {
                 "description": "Адрес WeChatPadPro",

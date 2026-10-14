@@ -863,13 +863,9 @@
         "description": "长连接心跳间隔",
         "hint": "长连接模式心跳间隔（秒），建议 30 秒。"
       },
-      "admin_key": {
-        "description": "WeChatPadPro Admin Key",
-        "hint": "管理员 KEY，仅作为 /Admin/GenAuthKey 的 key 参数。"
-      },
       "access_token": {
         "description": "WeChatPadPro Access Token",
-        "hint": "账号 Access Token。取登录二维码和换 WebSocket 票据时放入请求头 X-Access-Token，不要填生成出来的授权码。"
+        "hint": "账号 Access Token。登录和换 WebSocket 票据时放入请求头 X-Access-Token，发消息、好友和群接口时作为查询参数 authcode。"
       },
       "host": {
         "description": "WeChatPadPro 地址",

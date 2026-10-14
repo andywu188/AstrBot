@@ -842,13 +842,9 @@
         "description": "Long Connection Heartbeat Interval",
         "hint": "Heartbeat interval (seconds) in long connection mode. 30 seconds is recommended."
       },
-      "admin_key": {
-        "description": "WeChatPadPro Admin Key",
-        "hint": "Admin KEY. It is sent only as the key query of /Admin/GenAuthKey."
-      },
       "access_token": {
         "description": "WeChatPadPro Access Token",
-        "hint": "Account Access Token. Sent as X-Access-Token when requesting the login QR code and the WebSocket ticket. Do not use the generated auth code."
+        "hint": "Account Access Token. Sent as X-Access-Token for login and the WebSocket ticket, and as the authcode query for message, friend, and group calls."
       },
       "host": {
         "description": "WeChatPadPro Host",
